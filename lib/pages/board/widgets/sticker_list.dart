@@ -38,6 +38,10 @@ class StickerList extends StatelessWidget {
 
   // 数据操作
   List<Widget> _getItemList(BuildContext context) {
+
+    var screenSize = MediaQuery.of(context).size;
+    var itemWH = 50.0;
+
     List<Widget> items = [];
     for (int i = 0;i < stickerCount;i++) {
       items.add(GestureDetector(
@@ -47,7 +51,7 @@ class StickerList extends StatelessWidget {
           child: Image.asset('images/sticker/$i.png'),
         ),
         onTap: () {
-          var stickerViewModel = StickerViewModel(imagePath: 'images/sticker/$i.png', x: 100.0, y: 100.0, width: 50.0, height: 50.0);
+          var stickerViewModel = StickerViewModel(imagePath: 'images/sticker/$i.png', x: (screenSize.width - itemWH) * 0.5, y: (screenSize.height - itemWH) * 0.5, width: itemWH, height: itemWH);
           Provider.of<DrawBoardProvider>(context).addSticker(stickerViewModel);
         },
       ));
