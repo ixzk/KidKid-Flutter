@@ -6,6 +6,8 @@ import 'package:kidkid/widgets/title_more.dart';
 import 'package:kidkid/pages/music/widgets/music_type_item.dart';
 import 'package:kidkid/pages/music/widgets/music_folder_item.dart';
 import 'package:kidkid/widgets/music_cell.dart';
+import 'package:provider/provider.dart';
+import 'package:kidkid/providers/draw_board_provider.dart';
 
 class Music extends StatelessWidget {
   // 布局常量
@@ -34,7 +36,18 @@ class Music extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          MusicTypeItem(name: '涂鸦板', image: Image.asset('images/music/huaban.png'), onTap: (context) => DrawBoard()),
+                          MusicTypeItem(
+                            name: '涂鸦板', 
+                            image: Image.asset('images/music/huaban.png'), 
+                            onTap: (context) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider<DrawBoardProvider>.value(
+                                  value: DrawBoardProvider(),
+                                )
+                              ],
+                              child:DrawBoard()
+                            )
+                          ),
                           MusicTypeItem(name: '益智游戏', image: Image.asset('images/music/game.png'), onTap: (context) => Game()),
                           MusicTypeItem(name: '家长中心', image: Image.asset('images/music/jiazhang.png')),
                         ],

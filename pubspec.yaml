@@ -63,6 +63,43 @@ flutter:
 
   - images/demo/poster.png
 
+  - images/sticker/0.png
+  - images/sticker/1.png
+  - images/sticker/2.png
+  - images/sticker/3.png
+  - images/sticker/4.png
+  - images/sticker/5.png
+  - images/sticker/6.png
+  - images/sticker/7.png
+  - images/sticker/8.png
+  - images/sticker/9.png
+  - images/sticker/10.png
+  - images/sticker/11.png
+  - images/sticker/12.png
+  - images/sticker/13.png
+  - images/sticker/14.png
+  - images/sticker/15.png
+  - images/sticker/16.png
+  - images/sticker/17.png
+  - images/sticker/18.png
+  - images/sticker/19.png
+  - images/sticker/20.png
+  - images/sticker/21.png
+  - images/sticker/22.png
+  - images/sticker/23.png
+  - images/sticker/24.png
+  - images/sticker/25.png
+  - images/sticker/26.png
+  - images/sticker/27.png
+  - images/sticker/28.png
+  - images/sticker/29.png
+  - images/sticker/30.png
+  - images/sticker/31.png
+  - images/sticker/32.png
+  - images/sticker/33.png
+  - images/sticker/34.png
+  - images/sticker/35.png
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
