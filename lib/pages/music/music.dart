@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kidkid/http/Http.dart';
 import 'package:kidkid/pages/board/draw_board.dart';
 import 'package:kidkid/pages/game/game.dart';
+import 'package:kidkid/providers/game_provider.dart';
 import 'package:kidkid/util/global_colors.dart';
 import 'package:kidkid/widgets/title_more.dart';
 import 'package:kidkid/pages/music/widgets/music_type_item.dart';
@@ -49,7 +50,17 @@ class Music extends StatelessWidget {
                               child:DrawBoard()
                             )
                           ),
-                          MusicTypeItem(name: '益智游戏', image: Image.asset('images/music/game.png'), onTap: (context) => Game()),
+                          MusicTypeItem(
+                            name: '益智游戏', 
+                            image: Image.asset('images/music/game.png'), 
+                            onTap: (context) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider<GameProvider>.value(
+                                  value: GameProvider(),
+                                )
+                              ],
+                              child:Game()
+                            )),
                           MusicTypeItem(name: '家长中心', image: Image.asset('images/music/jiazhang.png')),
                         ],
                       )

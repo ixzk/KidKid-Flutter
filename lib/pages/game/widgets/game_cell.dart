@@ -62,13 +62,6 @@ class GameCell extends StatelessWidget {
       )
     );
 
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(context, MaterialPageRoute(
-          builder: (context) => KKWebView(title: '小兔子', url: 'http://baidu.com',)
-        ));
-      },
-      child: view,
-    );
+    return view;
   }
 }

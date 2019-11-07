@@ -16,5 +16,5 @@ class GameModel extends Object {
   GameModel(this.title, this.pic, this.category, this.wapclicks, this.playlink, this.html5introduce, this.zzylink);
 
   factory GameModel.fromJson(Map<String, dynamic> json) => _$GameModelFromJson(json);
-  Map<String, dynamic> toJson() => $_GameModelToJson(this);
+  Map<String, dynamic> toJson() => _$GameModelToJson(this);
 }

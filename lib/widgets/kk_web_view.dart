@@ -20,7 +20,7 @@ class KKWebView extends StatelessWidget {
         border: null,
         backgroundColor: GlobalColors.white,
         actionsForegroundColor: GlobalColors.red,
-        middle: Text('益智游戏')
+        middle: Text(title)
       ),
       child: WebView(
         initialUrl: url,

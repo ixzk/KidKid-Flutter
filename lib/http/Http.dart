@@ -2,15 +2,26 @@
 
 import 'package:dio/dio.dart';
 
+typedef void HttpSuccessCallBack(result);
+typedef void HttpFailureCallBack(error);
+
 class Http {
   
-  Future<void> get(String url, [Map<String, dynamic> params]) async {
-    Response response = await Dio().get(url, queryParameters: params);
-    return response;
+  static Future<void> get(String url, {Map<String, dynamic> params, HttpSuccessCallBack success, HttpFailureCallBack failure}) async {
+    try {
+      Response response = await Dio().get(url, queryParameters: params);
+      if (success != null) {
+        success(response.data.toString());
+      }
+    } catch (exception) {
+      if (failure != null) {
+        failure(exception);
+      }
+    }
   }
 
-  Future<void> post(String url, [Map<String, dynamic> params]) async {
+  static Future<void> post(String url, [Map<String, dynamic> params]) async {
     Response response = await Dio().post(url, queryParameters: params);
-    return response;
+    return response.data;
   }
 }
