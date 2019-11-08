@@ -29,18 +29,21 @@ class TitleMore extends StatelessWidget {
 
     if (pressMore != null) {
       row.children.add(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Text(
-              '更多', 
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 14.0
-              )
-            ),
-            Icon(Icons.chevron_right, color: Colors.grey)
-          ],
+        GestureDetector(
+          onTap: pressMore,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Text(
+                '更多', 
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 14.0
+                )
+              ),
+              Icon(Icons.chevron_right, color: Colors.grey)
+            ],
+          )
         )
       );
     }

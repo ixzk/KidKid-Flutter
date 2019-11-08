@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:kidkid/http/Http.dart';
 import 'package:kidkid/pages/board/draw_board.dart';
 import 'package:kidkid/pages/game/game.dart';
+import 'package:kidkid/pages/music/music_more.dart';
+import 'package:kidkid/pages/player/player.dart';
 import 'package:kidkid/providers/game_provider.dart';
 import 'package:kidkid/util/global_colors.dart';
 import 'package:kidkid/widgets/title_more.dart';
 import 'package:kidkid/pages/music/widgets/music_type_item.dart';
 import 'package:kidkid/pages/music/widgets/music_folder_item.dart';
-import 'package:kidkid/widgets/music_cell.dart';
+import 'package:kidkid/pages/music/widgets/music_cell.dart';
 import 'package:provider/provider.dart';
 import 'package:kidkid/providers/draw_board_provider.dart';
 
@@ -100,12 +102,23 @@ class Music extends StatelessWidget {
           return Container(
             margin: EdgeInsets.only(top: 10.0),
             padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: TitleMore(title: '当前最热')
+            child: TitleMore(title: '当前最热', pressMore: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => MusicMore()
+              ));
+            },)
           );
         } else {
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: MusicCell('歌曲名', desc: '歌手介绍', image: Image.asset('images/demo/poster.png', fit: BoxFit.cover)),
+          return GestureDetector(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0),
+              child: MusicCell('歌曲名', desc: '歌手介绍', image: Image.asset('images/demo/poster.png', fit: BoxFit.cover)),
+            ),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => Player()
+              ));
+            },
           );
         }
       },

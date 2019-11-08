@@ -6,7 +6,6 @@ import 'package:kidkid/models/game/game_model.dart';
 import 'package:kidkid/util/global_colors.dart';
 import 'package:kidkid/pages/game/widgets/game_cell.dart';
 import 'package:kidkid/widgets/kk_web_view.dart';
-import 'package:kidkid/widgets/loading_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:kidkid/providers/game_provider.dart';
 

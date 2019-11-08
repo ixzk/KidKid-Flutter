@@ -23,6 +23,7 @@ class MainPage extends StatelessWidget {
           backgroundColor: GlobalColors.bgColor,
           leading: TitleLine(title: '${title ?? ""}'),
           automaticallyImplyMiddle: false,
+          trailing: Icon(Icons.settings, color: Colors.grey, size: 24.0),
         ),
         child: body
       ),

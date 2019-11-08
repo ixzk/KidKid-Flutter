@@ -63,6 +63,11 @@ flutter:
   - images/music/game.png
   - images/music/jiazhang.png
 
+  - images/player/pre.png
+  - images/player/playing.png
+  - images/player/pause.png
+  - images/player/next.png
+
   - images/demo/poster.png
 
   - images/sticker/0.png
