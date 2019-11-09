@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:kidkid/models/cartoon/cartoon_model.dart';
 import 'package:kidkid/util/global_colors.dart';
 
 class VideoCell extends StatelessWidget {
+
+  final CartoonModel model;
+
+  VideoCell(this.model);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -15,9 +21,10 @@ class VideoCell extends StatelessWidget {
             child: Container(
               color: Colors.grey,
               height: 100.0,
+              child: Image.network(model.img, fit: BoxFit.cover,),
             )
           ),
-          Text('学加减法', style: TextStyle(fontWeight: FontWeight.bold))
+          Text(model.title, style: TextStyle(fontWeight: FontWeight.bold))
         ],
       ),
     );

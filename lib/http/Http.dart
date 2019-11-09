@@ -11,7 +11,7 @@ class Http {
     try {
       Response response = await Dio().get(url, queryParameters: params);
       if (success != null) {
-        success(response.data.toString());
+        success(response.toString());
       }
     } catch (exception) {
       if (failure != null) {

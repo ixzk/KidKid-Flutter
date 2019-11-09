@@ -1,18 +1,47 @@
 // 音乐播放器界面
 
+import 'dart:ui';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:kidkid/models/music/music_model.dart';
 import 'package:kidkid/util/global_colors.dart';
 
-class Player extends StatelessWidget {
-  const Player({Key key}) : super(key: key);
+class Player extends StatefulWidget {
+  final MusicModel music;
+  int index = 0;
+
+  Player(this.music, {this.index});
+
+  _PlayerState createState() => new _PlayerState(music, index);
+}
+
+class _PlayerState extends State<Player> {
+
+  AudioPlayer _audioPlayer = AudioPlayer();
+
+  MusicModel _music;
+  var _index;
+  Duration _duration;
+  Duration _currentTime;
+  AudioPlayerState _playerState;
+
+  _PlayerState(this._music, this._index) {
+    _duration = Duration();
+    _currentTime = Duration();
+    _playerState = AudioPlayerState.PLAYING;
+
+    _initListeners();
+    play();
+  }
 
   @override
   Widget build(BuildContext context) {
 
     Size size = MediaQuery.of(context).size;
 
-    return Material(
-      child: Container(
+    return Scaffold(
+      body: Container(
         color: Color(0xFF232436),
         padding: EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Column(
@@ -28,7 +57,7 @@ class Player extends StatelessWidget {
               width: size.width * 0.5,
               margin: EdgeInsets.symmetric(vertical: 10),
               child: Text(
-                'GUARDINAS OF THE GALAXY', 
+                _music.title, 
                 style: TextStyle(
                   fontSize: 20, 
                   color: Colors.white,
@@ -37,7 +66,7 @@ class Player extends StatelessWidget {
               ),
             ),
             Text(
-              'Various Artists',
+              _music.singer,
               style: TextStyle(
                 color: Colors.grey
               ),
@@ -47,17 +76,54 @@ class Player extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Container(
-                    width: size.width * 0.7,
-                    height: size.width * 0.7,
-                    decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(10.0),
-                      image: DecorationImage(
-                        image: NetworkImage('https://ci.xiaohongshu.com/bbbd8b31-6e03-5c36-a730-5f4015054714?imageView2/2/w/1080/format/jpg'),
-                        fit: BoxFit.cover
+                  Stack(
+                    children: <Widget>[
+                      Container(
+                        width: size.width * 0.7,
+                        height: size.width * 0.7,
+                        decoration: BoxDecoration(
+                          color: Colors.grey,
+                          borderRadius: BorderRadius.circular(10.0),
+                          image: DecorationImage(
+                            image: NetworkImage(_music.img),
+                            fit: BoxFit.cover
+                          )
+                        ),
+                      ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10.0),
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                          child: Container(
+                            width: size.width * 0.7,
+                            height: size.width * 0.7,
+                            decoration: new BoxDecoration(
+                              color: Colors.grey.shade200.withOpacity(0.4)
+                            ),
+                          ),
+                        )
+                      ),
+                      Positioned(
+                        top: (size.width * 0.7 - 50.0) * 0.5,
+                        left: (size.width * 0.7 - 50.0) * 0.5,
+                        child: GestureDetector(
+                          child: Image.asset('images/player/${_playerState == AudioPlayerState.PLAYING ? "playing.png" : "pause.png"}', width: 50, height: 50),
+                          onTap: () {
+                            // var state = _playerState;
+                            if (_playerState == AudioPlayerState.PLAYING) {
+                              _audioPlayer.pause();
+                            } else {
+                              _audioPlayer.resume();
+                            }
+                            
+                            // setState(() {
+                            //   _playerState = state;
+                            // });
+                            
+                          },
+                        ),
                       )
-                    ),
+                    ],
                   )
                 ],
               ),
@@ -65,7 +131,7 @@ class Player extends StatelessWidget {
             Row(
               children: <Widget>[
                 Text(
-                  '00:00',
+                  '${_currentTime.inMinutes.toString()}:${_currentTime.inSeconds - _currentTime.inMinutes * 60}',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 12
@@ -73,8 +139,8 @@ class Player extends StatelessWidget {
                 ),
                 Expanded(
                   child: Slider(
-                    value: 50.0,
-                    max: 100.0,
+                    value: _currentTime.inSeconds * 1.0,
+                    max: _duration.inSeconds * 1.0,
                     min: 0.0,
                     activeColor: Color(0xFFFC1F49),
                     onChanged: (val) => {
@@ -83,7 +149,7 @@ class Player extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '02:51',
+                  '${_duration.inMinutes.toString()}:${_duration.inSeconds - _duration.inMinutes * 60}',
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 12
@@ -94,20 +160,43 @@ class Player extends StatelessWidget {
             SizedBox(
               height: 10,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Image.asset('images/player/pre.png', width: 35, height: 35),
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 20),
-                  child: Image.asset('images/player/playing.png', width: 50, height: 50),
-                ),
-                Image.asset('images/player/next.png', width: 35, height: 35),
-              ],
-            )
           ],
         ),
       ),
     );
+  }
+
+  void _initListeners() {
+    _audioPlayer.onDurationChanged.listen((Duration d) {
+      setState(() {
+        _duration = d;
+      });
+    });
+
+    _audioPlayer.onAudioPositionChanged.listen((Duration p) {
+      setState(() {
+        _currentTime = p;
+      });
+    });
+
+    _audioPlayer.onPlayerStateChanged.listen((AudioPlayerState s) {
+      setState(() {
+        _playerState = s;
+      });
+    });
+  }
+
+  void play() {
+    _audioPlayer.play(_music.song);
+  }
+
+  void pause() {
+    _audioPlayer.pause();
+  }
+
+  dispose() {
+    _audioPlayer.stop();
+    _audioPlayer.release();
+    super.dispose();
   }
 }

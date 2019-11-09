@@ -22,6 +22,7 @@ class GameProvider with ChangeNotifier {
     Http.get(
       url, 
       success: (result) {
+        print(result);
         var jsonData = json.decode(result)["data"];
         for (var gameJson in jsonData) {
           this.gameList.add(GameModel.fromJson(gameJson));

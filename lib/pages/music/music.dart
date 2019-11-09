@@ -5,6 +5,7 @@ import 'package:kidkid/pages/game/game.dart';
 import 'package:kidkid/pages/music/music_more.dart';
 import 'package:kidkid/pages/player/player.dart';
 import 'package:kidkid/providers/game_provider.dart';
+import 'package:kidkid/providers/music_provider.dart';
 import 'package:kidkid/util/global_colors.dart';
 import 'package:kidkid/widgets/title_more.dart';
 import 'package:kidkid/pages/music/widgets/music_type_item.dart';
@@ -24,8 +25,10 @@ class Music extends StatelessWidget {
 
     double itemWH = (MediaQuery.of(context).size.width - 20 * 2 - 20 * 2) / 3.0;
 
+    var provider = Provider.of<MusicProvider>(context);
+
     return ListView.builder(
-      itemCount: listsArea + 5,
+      itemCount: listsArea + provider.songList.length,
       itemBuilder: (context, index) {
         if (index == navArea) {
           return Container(
@@ -104,19 +107,20 @@ class Music extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: TitleMore(title: '当前最热', pressMore: () {
               Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => MusicMore()
+                  builder: (context) => MusicMore(provider)
               ));
             },)
           );
         } else {
+          var model = provider.songList[index - listsArea];
           return GestureDetector(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: MusicCell('歌曲名', desc: '歌手介绍', image: Image.asset('images/demo/poster.png', fit: BoxFit.cover)),
+              child: MusicCell(model.title, desc: model.singer, image: Image.network(model.img, fit: BoxFit.cover)),
             ),
             onTap: () {
               Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => Player()
+                  builder: (context) => Player(model)
               ));
             },
           );
