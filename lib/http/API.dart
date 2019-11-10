@@ -10,3 +10,5 @@ final API_HOST = API_TYPE + "52.175.79.187:5000";
 final API_SONG_LIST = API_HOST + "/GetSong/";
 // 视频列表
 final API_CARTOON_LIST = API_HOST + "/GetCartoon/";
+// 合集列表
+final API_COLLECTION_LIST = API_HOST + "/GetCollection/";

@@ -10,7 +10,7 @@ class KKWebView extends StatelessWidget {
   final String title;
   final String url;
 
-  KKWebView({this.title, this.url});
+  KKWebView({Key key, this.title, this.url});
 
   @override
   Widget build(BuildContext context) {

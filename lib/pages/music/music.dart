@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kidkid/http/Http.dart';
+import 'package:kidkid/models/cartoon/collection_model.dart';
 import 'package:kidkid/pages/board/draw_board.dart';
 import 'package:kidkid/pages/game/game.dart';
 import 'package:kidkid/pages/music/music_more.dart';
@@ -88,15 +89,7 @@ class Music extends StatelessWidget {
                 child: ListView(
                   padding: EdgeInsets.only(left: 20.0),
                   scrollDirection: Axis.horizontal,
-                  children: <Widget>[
-                    MusicFolderItem(name: '那些年', image: Image.asset('images/demo/poster.png', fit: BoxFit.cover)),
-                    MusicFolderItem(name: '那些年', image: Image.asset('images/demo/poster.png', fit: BoxFit.cover)),
-                    MusicFolderItem(name: '那些年', image: Image.asset('images/demo/poster.png', fit: BoxFit.cover)),
-                    MusicFolderItem(name: '那些年', image: Image.asset('images/demo/poster.png', fit: BoxFit.cover)),
-                    MusicFolderItem(name: '那些年', image: Image.asset('images/demo/poster.png', fit: BoxFit.cover)),
-                    MusicFolderItem(name: '那些年', image: Image.asset('images/demo/poster.png', fit: BoxFit.cover)),
-                    MusicFolderItem(name: '那些年', image: Image.asset('images/demo/poster.png', fit: BoxFit.cover))
-                  ],
+                  children: _getCollectionList(provider),
                 ),
               ),
             ],
@@ -127,5 +120,14 @@ class Music extends StatelessWidget {
         }
       },
     );
+  }
+
+  List<Widget> _getCollectionList(MusicProvider provider) {
+    List<Widget> list = [];
+    for (CollectionModel model in provider.collectionList) {  
+      list.add(MusicFolderItem(name: model.title, image: Image.network(model.img, fit: BoxFit.fitHeight)));
+    }
+
+    return list;
   }
 }

@@ -30,6 +30,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   webview_flutter:
   flutter_swiper:
+  chewie:
+  video_player:
 
 dev_dependencies:
   flutter_test:
