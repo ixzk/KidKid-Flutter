@@ -5,6 +5,7 @@ import 'package:kidkid/pages/board/draw_board.dart';
 import 'package:kidkid/pages/game/game.dart';
 import 'package:kidkid/pages/music/music_more.dart';
 import 'package:kidkid/pages/player/player.dart';
+import 'package:kidkid/pages/story/story.dart';
 import 'package:kidkid/providers/game_provider.dart';
 import 'package:kidkid/providers/music_provider.dart';
 import 'package:kidkid/util/global_colors.dart';
@@ -67,7 +68,18 @@ class Music extends StatelessWidget {
                               ],
                               child:Game()
                             )),
-                          MusicTypeItem(name: '家长中心', image: Image.asset('images/music/jiazhang.png')),
+                          MusicTypeItem(
+                            name: '录制故事', 
+                            image: Image.asset('images/music/jiazhang.png'), 
+                            onTap: (context) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider<GameProvider>.value(
+                                  value: GameProvider(),
+                                )
+                              ],
+                              child:Story()
+                            )
+                          ),
                         ],
                       )
                     ],
