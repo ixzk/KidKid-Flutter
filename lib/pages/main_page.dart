@@ -19,6 +19,8 @@ class MainPage extends StatelessWidget {
       child: CupertinoPageScaffold(
         backgroundColor: GlobalColors.bgColor,
         navigationBar: CupertinoNavigationBar(
+          heroTag: this.title,
+          transitionBetweenRoutes: false,
           border: null,
           backgroundColor: GlobalColors.bgColor,
           leading: TitleLine(title: '${title ?? ""}'),

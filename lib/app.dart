@@ -39,7 +39,7 @@ class App extends StatelessWidget {
           // );
           Widget page;
           switch (index) {
-            case 2: 
+            case 0: 
               page = MainPage(
                       title: '广场', 
                       body: MultiProvider(
@@ -53,7 +53,7 @@ class App extends StatelessWidget {
                     ); 
               break;
             case 1: page = AI(); break;
-            case 0: page = MainPage(
+            case 2: page = MainPage(
                       title: '视频', 
                       body: MultiProvider(
                         providers: [
