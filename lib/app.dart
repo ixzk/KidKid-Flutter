@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kidkid/pages/ai/ai.dart';
 import 'package:kidkid/pages/video/video.dart';
+import 'package:kidkid/providers/ai_provider.dart';
 import 'package:kidkid/providers/music_provider.dart';
 import 'package:kidkid/providers/video_provider.dart';
 import 'package:kidkid/util/global_colors.dart';
@@ -52,7 +53,19 @@ class App extends StatelessWidget {
                       )
                     ); 
               break;
-            case 1: page = AI(); break;
+            case 1: page = MainPage(
+                      title: '小K', 
+                      body: MultiProvider(
+                        providers: [
+                          ChangeNotifierProvider(
+                            builder: (context) => AIProvider(),
+                          )
+                        ],
+                        child: AI(),
+                      )
+                    ); 
+            
+              break;
             case 2: page = MainPage(
                       title: '视频', 
                       body: MultiProvider(
@@ -74,11 +87,6 @@ class App extends StatelessWidget {
                 Expanded(
                   child: page,
                 ),
-                // MiniPlayer()
-                index == 1 ? Container(
-                  height: 50.0,
-                  color: Colors.green,
-                ): Container()
               ],
             ),
           );

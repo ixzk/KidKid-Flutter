@@ -26,6 +26,14 @@ dependencies:
   path_provider:
   dio:
   audioplayers:
+  permission_handler:
+  image_gallery_saver:
+  fluttertoast:
+  shared_preferences:
+  flutter_sound:
+  xfvoice:
+    git:
+      url: https://github.com/moyaying/xfvoice
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -111,6 +119,8 @@ flutter:
   - images/sticker/33.png
   - images/sticker/34.png
   - images/sticker/35.png
+
+  - images/logo_v2.0.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -2,7 +2,9 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryUsageDescription</key>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>KidKid请求使用麦克风</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>KidKid请求访问您的相册</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
@@ -50,5 +52,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+    <key>NSMicrophoneUsageDescription</key>
+    <string></string>
+    <key>NSLocationUsageDescription</key>
+    <string></string>
+    <key>NSLocationAlwaysUsageDescription</key>
+    <string></string>
+    <key>NSContactsUsageDescription</key>
+    <string></string>
 </dict>
 </plist>

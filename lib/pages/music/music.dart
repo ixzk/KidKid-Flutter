@@ -8,7 +8,9 @@ import 'package:kidkid/pages/player/player.dart';
 import 'package:kidkid/pages/story/story.dart';
 import 'package:kidkid/providers/game_provider.dart';
 import 'package:kidkid/providers/music_provider.dart';
+import 'package:kidkid/providers/story_provider.dart';
 import 'package:kidkid/util/global_colors.dart';
+import 'package:kidkid/widgets/loading_dialog.dart';
 import 'package:kidkid/widgets/title_more.dart';
 import 'package:kidkid/pages/music/widgets/music_type_item.dart';
 import 'package:kidkid/pages/music/widgets/music_folder_item.dart';
@@ -29,109 +31,122 @@ class Music extends StatelessWidget {
 
     var provider = Provider.of<MusicProvider>(context);
 
-    return ListView.builder(
-      itemCount: listsArea + provider.songList.length,
-      itemBuilder: (context, index) {
-        if (index == navArea) {
-          return Container(
-            padding: EdgeInsets.all(15.0),
-            child: Column(
+    if (provider.songList.length == 0) {
+      return Container(
+        height: MediaQuery.of(context).size.height,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            CircularProgressIndicator(),
+          ],
+        )
+      );
+    } else {
+      return ListView.builder(
+        itemCount: listsArea + provider.songList.length,
+        itemBuilder: (context, index) {
+          if (index == navArea) {
+            return Container(
+              padding: EdgeInsets.all(15.0),
+              child: Column(
+                children: <Widget>[
+                  TitleMore(title: '玩具箱'),
+                  Container(
+                    margin: EdgeInsets.symmetric(vertical: 10.0),
+                    child: Column(
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            MusicTypeItem(
+                              name: '涂鸦板', 
+                              image: Image.asset('images/music/huaban.png'), 
+                              onTap: (context) => MultiProvider(
+                                providers: [
+                                  ChangeNotifierProvider<DrawBoardProvider>.value(
+                                    value: DrawBoardProvider(),
+                                  )
+                                ],
+                                child:DrawBoard()
+                              )
+                            ),
+                            MusicTypeItem(
+                              name: '益智游戏', 
+                              image: Image.asset('images/music/game.png'), 
+                              onTap: (context) => MultiProvider(
+                                providers: [
+                                  ChangeNotifierProvider<GameProvider>.value(
+                                    value: GameProvider(),
+                                  )
+                                ],
+                                child:Game()
+                              )),
+                            MusicTypeItem(
+                              name: '录制故事', 
+                              image: Image.asset('images/music/jiazhang.png'), 
+                              onTap: (context) => MultiProvider(
+                                providers: [
+                                  ChangeNotifierProvider<StoryProvider>.value(
+                                    value: StoryProvider(),
+                                  )
+                                ],
+                                child:Story()
+                              )
+                            ),
+                          ],
+                        )
+                      ],
+                    )
+                  ),              
+                ],
+              ),
+            );
+          } else if (index == collectArea) {
+            return Column(
               children: <Widget>[
-                TitleMore(title: '玩具箱'),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 10.0),
-                  child: Column(
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          MusicTypeItem(
-                            name: '涂鸦板', 
-                            image: Image.asset('images/music/huaban.png'), 
-                            onTap: (context) => MultiProvider(
-                              providers: [
-                                ChangeNotifierProvider<DrawBoardProvider>.value(
-                                  value: DrawBoardProvider(),
-                                )
-                              ],
-                              child:DrawBoard()
-                            )
-                          ),
-                          MusicTypeItem(
-                            name: '益智游戏', 
-                            image: Image.asset('images/music/game.png'), 
-                            onTap: (context) => MultiProvider(
-                              providers: [
-                                ChangeNotifierProvider<GameProvider>.value(
-                                  value: GameProvider(),
-                                )
-                              ],
-                              child:Game()
-                            )),
-                          MusicTypeItem(
-                            name: '录制故事', 
-                            image: Image.asset('images/music/jiazhang.png'), 
-                            onTap: (context) => MultiProvider(
-                              providers: [
-                                ChangeNotifierProvider<GameProvider>.value(
-                                  value: GameProvider(),
-                                )
-                              ],
-                              child:Story()
-                            )
-                          ),
-                        ],
-                      )
-                    ],
-                  )
-                ),              
-              ],
-            ),
-          );
-        } else if (index == collectArea) {
-          return Column(
-            children: <Widget>[
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: TitleMore(title: '好听的故事合集')
-              ),
-              Container(
-                height: itemWH,
-                margin: EdgeInsets.symmetric(vertical: 10.0),
-                child: ListView(
-                  padding: EdgeInsets.only(left: 20.0),
-                  scrollDirection: Axis.horizontal,
-                  children: _getCollectionList(provider),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: TitleMore(title: '好听的故事合集')
                 ),
-              ),
-            ],
-          );
-        } else if (index == listsArea){
-          return Container(
-            margin: EdgeInsets.only(top: 10.0),
-            padding: EdgeInsets.symmetric(horizontal: 20.0),
-            child: TitleMore(title: '当前最热', pressMore: () {
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => MusicMore(provider)
-              ));
-            },)
-          );
-        } else {
-          var model = provider.songList[index - listsArea];
-          return GestureDetector(
-            child: Padding(
+                Container(
+                  height: itemWH,
+                  margin: EdgeInsets.symmetric(vertical: 10.0),
+                  child: ListView(
+                    padding: EdgeInsets.only(left: 20.0),
+                    scrollDirection: Axis.horizontal,
+                    children: _getCollectionList(provider),
+                  ),
+                ),
+              ],
+            );
+          } else if (index == listsArea){
+            return Container(
+              margin: EdgeInsets.only(top: 10.0),
               padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: MusicCell(model.title, desc: model.singer, image: Image.network(model.img, fit: BoxFit.cover)),
-            ),
-            onTap: () {
-              Navigator.push(context, MaterialPageRoute(
-                  builder: (context) => Player(model)
-              ));
-            },
-          );
-        }
-      },
-    );
+              child: TitleMore(title: '当前最热', pressMore: () {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => MusicMore(provider)
+                ));
+              },)
+            );
+          } else {
+            var model = provider.songList[index - listsArea];
+            return GestureDetector(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: MusicCell(model.title, desc: model.singer, image: Image.network(model.img, fit: BoxFit.cover)),
+              ),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => Player(model)
+                ));
+              },
+            );
+          }
+        },
+      );
+    }
   }
 
   List<Widget> _getCollectionList(MusicProvider provider) {

@@ -1,12 +1,47 @@
 // 故事详情页面
 
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:kidkid/http/API.dart';
+import 'package:kidkid/http/Http.dart';
+import 'package:kidkid/models/record/record_model.dart';
+import 'package:kidkid/models/sotry/story_model.dart';
+import 'package:kidkid/providers/story_provider.dart';
 import 'package:kidkid/util/global_colors.dart';
+import 'package:kidkid/widgets/loading_dialog.dart';
+import 'package:provider/provider.dart';
 
-class StoryDetail extends StatelessWidget {
+class StoryDetail extends StatefulWidget {
+  final StoryModel model;
+  final StoryProvider provider;
+  StoryDetail(this.model, this.provider);
+  _StoryDetailState createState() => new _StoryDetailState(model, provider);
+}
+
+class _StoryDetailState extends State<StoryDetail> {
+
+  final StoryModel model;
+  final StoryProvider provider;
+  final FlutterSound flutterSound = new FlutterSound();
+  String path;
+  StreamSubscription _playerSubscription;
+  bool isVoicing = false;
+
+
+  _StoryDetailState(this.model, this.provider);
+
   @override
   Widget build(BuildContext context) {
+
+    provider.getRecordList(model.id);
+
     return Material(
       child: CupertinoPageScaffold(
       backgroundColor: GlobalColors.bgColor,
@@ -14,7 +49,7 @@ class StoryDetail extends StatelessWidget {
           border: null,
           backgroundColor: GlobalColors.white,
           actionsForegroundColor: GlobalColors.red,
-          middle: Text('故事详情'),
+          middle: Text(model.title),
           trailing: Icon(Icons.cloud_upload),
         ),
         child: Container(
@@ -24,53 +59,156 @@ class StoryDetail extends StatelessWidget {
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.all(10.0),
-                  children: <Widget>[
-                    Text("CGAffineTransform形变是通过仿射变换矩来控制的,其中平移是矩阵相加,旋转与缩放则是矩阵相乘,为了合并矩阵运算中的加法和乘法,引入了齐次坐标的概念,它提供了用矩阵运算把二维、三维甚至高维空间中的一个点集从一个坐标系变换到另一个坐标系的有效方法.CGAffineTransform形变就是把二维形变使用一个三维矩阵来表示,其中第三列总是(0,0,1),形变通过前两列来控制,系统提供了CGAffineTransformMake结构体来控制形变作者：蚊香酱",
-                      style: TextStyle(fontWeight: FontWeight.w300, fontSize: 20.0),
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(vertical: 20.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Container(
-                            width: 100.0,
-                            height: 1.0,
-                            color: Colors.grey,
-                          ),
-                          Text("成品展示"),
-                          Container(
-                            width: 100.0,
-                            height: 1.0,
-                            color: Colors.grey,
-                          )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.only(bottom: 10.0),
-                      decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(width: 0.2, color: Colors.grey))
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text("录音标题"),
-                          Icon(Icons.play_circle_filled)
-                        ],
-                      )
-                    )
-                  ],
+                  children: _getList(provider.recordList),
                 )
               ),
               Container(
                 height: 60.0,
-                color: Colors.red,
+                color: GlobalColors.bgColor,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    GestureDetector(
+                      child: Icon(Icons.cloud_upload, color: GlobalColors.red),
+                      onTap: () {
+                        _upload();
+                      },
+                    ),
+                    RaisedButton(
+                      child: Icon(Icons.keyboard_voice, color: GlobalColors.white),
+                      color: GlobalColors.red,
+                      onPressed: () {
+                      },
+                      onHighlightChanged: (changed) {
+                        setState(() {
+                          isVoicing = !changed;
+                        });
+                        _onVoice();
+                      },
+                    ),
+                    GestureDetector(
+                      child: Icon(Icons.play_circle_filled, color: GlobalColors.red),
+                      onTap: () {
+                        _play();
+                      },
+                    )
+                  ],
+                ),
               )
             ],
           ),
         )
       )
     );
+  }
+
+  Future _onVoice() async {
+    if (!isVoicing) {
+      await flutterSound.startRecorder(null);
+    } else {
+      await flutterSound.stopRecorder();
+    }
+    print("录音");
+  }
+
+  Future _play() async {
+    String voicePath = await flutterSound.startPlayer(null);
+    // return print("file文件：$contents");
+    await flutterSound.setVolume(1.0);
+    print('startPlayer: $path');
+    setState(() {
+      path = voicePath;
+    });
+  }
+
+  _upload() async {
+    if (path != null) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return LoadingDialog(text: '上传中');
+        }
+      );
+
+      FormData formdata = FormData.fromMap({
+        "file": MultipartFile.fromFile(path, filename: "sound.m4a"),
+      });
+      Response res = await Dio().post(
+        //此处更换为自己的上传文件接口
+        'http://39.97.174.216/upload.php',
+        data: formdata,
+      );
+
+      var jsonData = json.decode(res.data);
+      var imgUrl = jsonData["data"]["path"];
+
+      Http.post(API_UPLOAD_RECORD, params: {
+        "userid": "0",
+        "url": imgUrl,
+        "StoryId": model.id,
+        "title": model.title
+      }, success: (res) {
+        Navigator.pop(context);
+        Fluttertoast.showToast(
+          msg: "上传成功",
+          gravity: ToastGravity.BOTTOM,
+        );
+      });
+
+    } else {
+      Fluttertoast.showToast(
+        msg: "还未录音",
+        gravity: ToastGravity.BOTTOM,
+      );
+    }
+  }
+
+  List<Widget> _getList(dataList) {
+    List<Widget> list = [];
+
+    list.add(Text(model.text,
+      style: TextStyle(fontWeight: FontWeight.w300, fontSize: 20.0),
+    ));
+
+    list.add(Container(
+      margin: EdgeInsets.symmetric(vertical: 20.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Container(
+            width: 100.0,
+            height: 1.0,
+            color: Colors.grey,
+          ),
+          Text("成品展示"),
+          Container(
+            width: 100.0,
+            height: 1.0,
+            color: Colors.grey,
+          )
+        ],
+      ),
+    ));
+
+    for (RecordModel model in dataList) {
+      list.add(
+        Container(
+          padding: EdgeInsets.only(bottom: 10.0),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(width: 0.2, color: Colors.grey))
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Text(model.title),
+              Icon(Icons.play_circle_filled)
+            ],
+          )
+        )
+      );
+    }
+
+    return list;
   }
 }

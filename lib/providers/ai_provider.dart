@@ -9,10 +9,16 @@ import 'package:crypto/crypto.dart';
 
 class AIProvider with ChangeNotifier {
   List<Object> chatList = [];
+  bool isVoicing = false;
 
   final APP_SECRET = "57db87590bee4c3dabfd4604aaa28535";
 
   AIProvider() {
+  }
+
+  void setVoicingState(bool state) {
+    isVoicing = state;
+    notifyListeners();
   }
 
   void chat(String str) {
