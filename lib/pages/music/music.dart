@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kidkid/http/Http.dart';
 import 'package:kidkid/models/cartoon/collection_model.dart';
 import 'package:kidkid/pages/board/draw_board.dart';
+import 'package:kidkid/pages/collection/Collection.dart';
 import 'package:kidkid/pages/game/game.dart';
 import 'package:kidkid/pages/music/music_more.dart';
 import 'package:kidkid/pages/player/player.dart';
@@ -9,6 +10,7 @@ import 'package:kidkid/pages/story/story.dart';
 import 'package:kidkid/providers/game_provider.dart';
 import 'package:kidkid/providers/music_provider.dart';
 import 'package:kidkid/providers/story_provider.dart';
+import 'package:kidkid/providers/video_provider.dart';
 import 'package:kidkid/util/global_colors.dart';
 import 'package:kidkid/widgets/loading_dialog.dart';
 import 'package:kidkid/widgets/title_more.dart';
@@ -115,7 +117,7 @@ class Music extends StatelessWidget {
                   child: ListView(
                     padding: EdgeInsets.only(left: 20.0),
                     scrollDirection: Axis.horizontal,
-                    children: _getCollectionList(provider),
+                    children: _getCollectionList(provider, context),
                   ),
                 ),
               ],
@@ -149,10 +151,27 @@ class Music extends StatelessWidget {
     }
   }
 
-  List<Widget> _getCollectionList(MusicProvider provider) {
+  List<Widget> _getCollectionList(MusicProvider provider, context) {
     List<Widget> list = [];
     for (CollectionModel model in provider.collectionList) {  
-      list.add(MusicFolderItem(name: model.title, image: Image.network(model.img, fit: BoxFit.fitHeight)));
+      list.add(
+        GestureDetector(
+          child: MusicFolderItem(name: model.title, image: Image.network(model.img, fit: BoxFit.fitHeight)),
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => MultiProvider(
+                providers: [
+                  ChangeNotifierProvider<VideoProvider>.value(
+                    value: VideoProvider(collectId: model.id),
+                  )
+                ],
+                child:Collection(model.title),
+              )
+            ));
+          },
+        )
+    
+      );
     }
 
     return list;

@@ -13,24 +13,46 @@ class VideoProvider with ChangeNotifier {
     "http://zjimg.5054399.com/allimg/191108/15_191108134936_1.jpg"
   ];
 
-  VideoProvider() {
+  final String collectId;
+
+  VideoProvider({this.collectId}) {
     getData();
   }
 
   void getData() {
-    Http.get(
-      API_CARTOON_LIST,
-      success: (result) {
-        var jsonData = json.decode(result)["data"]["lists"];
-        for (var videoJson in jsonData) {
-          this.videoList.add(CartoonModel.fromJson(videoJson));
+    if (this.collectId == null) {
+      Http.get(
+        API_CARTOON_LIST,
+        success: (result) {
+          var jsonData = json.decode(result)["data"]["lists"];
+          for (var videoJson in jsonData) {
+            this.videoList.add(CartoonModel.fromJson(videoJson));
+          }
+          
+          notifyListeners();
+        },
+        failure: (error) {
+          print(error);
         }
-        
-        notifyListeners();
-      },
-      failure: (error) {
-        print(error);
-      }
-    );
+      );
+    } else {
+      Http.get(
+        API_COLLECTION_DETAIL,
+        params: {
+          "CollectionId": this.collectId
+        },
+        success: (result) {
+          var jsonData = json.decode(result)["data"]["lists"];
+          for (var videoJson in jsonData) {
+            this.videoList.add(CartoonModel.fromJson(videoJson));
+          }
+          
+          notifyListeners();
+        },
+        failure: (error) {
+          print(error);
+        }
+      );
+    }
   }
 }

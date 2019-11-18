@@ -20,9 +20,9 @@ class Http {
     }
   }
 
-  static Future<void> post(String url, {Map<String, dynamic> params, HttpSuccessCallBack success, HttpFailureCallBack failure}) async {
+  static Future<void> post(String url, {Map<String, dynamic> params,  var data, HttpSuccessCallBack success, HttpFailureCallBack failure}) async {
     try {
-      Response response = await Dio().post(url, queryParameters: params);
+      Response response = await Dio().post(url, queryParameters: params, data: data);
       if (success != null) {
         success(response.toString());
       }

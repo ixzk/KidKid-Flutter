@@ -229,10 +229,12 @@ class DrawBoard extends StatelessWidget {
         "id": 1,
         "url": "http://39.97.174.216/" + imgUrl
       };
+      
       print(data);
-      Http.post(API_UPLOAD_PIC, params:data, success: (res) {
+      Http.post(API_UPLOAD_PIC, data: FormData.fromMap(data), success: (res) {
+        Navigator.of(context).pop();
         Fluttertoast.showToast(
-          msg: "保存成功",
+          msg: "上传成功",
           gravity: ToastGravity.BOTTOM,
         );
       });

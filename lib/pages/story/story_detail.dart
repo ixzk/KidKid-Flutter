@@ -50,7 +50,7 @@ class _StoryDetailState extends State<StoryDetail> {
           backgroundColor: GlobalColors.white,
           actionsForegroundColor: GlobalColors.red,
           middle: Text(model.title),
-          trailing: Icon(Icons.cloud_upload),
+          // trailing: Icon(Icons.cloud_upload),
         ),
         child: Container(
           color: GlobalColors.white,
@@ -140,12 +140,12 @@ class _StoryDetailState extends State<StoryDetail> {
         data: formdata,
       );
 
-      var jsonData = json.decode(res.data);
-      var imgUrl = jsonData["data"]["path"];
+      var jsonData = json.decode(res.toString());
+      var fileUrl = jsonData["data"]["path"];
 
       Http.post(API_UPLOAD_RECORD, params: {
-        "userid": "0",
-        "url": imgUrl,
+        "userid": "1",
+        "url": fileUrl,
         "StoryId": model.id,
         "title": model.title
       }, success: (res) {

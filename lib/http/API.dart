@@ -12,6 +12,8 @@ final API_SONG_LIST = API_HOST + "/GetSong/";
 final API_CARTOON_LIST = API_HOST + "/GetCartoon/";
 // 合集列表
 final API_COLLECTION_LIST = API_HOST + "/GetCollection/";
+// 根据合集获取视频
+final API_COLLECTION_DETAIL = API_HOST + "/GetCartoon/";
 // AI助手
 final API_AI_BOT = "https://cn.olami.ai/cloudservice/api";
 // 注册
