@@ -8,6 +8,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:kidkid/http/API.dart';
 import 'package:kidkid/http/Http.dart';
+import 'package:kidkid/pages/board/draw_list.dart';
+import 'package:kidkid/providers/draw_list_provider.dart';
 import 'package:path/path.dart' as path;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,6 +24,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:kidkid/providers/draw_board_provider.dart';
 import 'package:http_parser/src/media_type.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawBoard extends StatelessWidget {
 
@@ -95,12 +98,21 @@ class DrawBoard extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       // 上传列表
-                      // GestureDetector(
-                      //   child: Icon(Icons.list, color: GlobalColors.red),
-                      //   onTap: () {
-
-                      //   },
-                      // ),
+                      GestureDetector(
+                        child: Icon(Icons.list, color: GlobalColors.red),
+                        onTap: () {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => MultiProvider(
+                              providers: [
+                                ChangeNotifierProvider(
+                                  builder: (context) => DrawListProvider(),
+                                )
+                              ],
+                              child: DrawList(),
+                            )
+                          ));
+                        },
+                      ),
                       SizedBox(width: 20.0),
                       // 上传云端按钮
                       GestureDetector(
@@ -224,9 +236,12 @@ class DrawBoard extends StatelessWidget {
     if (jsonData['code'] == 200) {
       var imgUrl = jsonData["data"]["path"];
       print(API_UPLOAD_PIC);
-      
+
+      Future<SharedPreferences> _pref = SharedPreferences.getInstance();
+      SharedPreferences pref = await _pref;
+      var id = pref.getString("id");
       var data = {
-        "id": 1,
+        "id": id,
         "url": "http://39.97.174.216/" + imgUrl
       };
       
