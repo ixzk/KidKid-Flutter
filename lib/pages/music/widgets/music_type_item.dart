@@ -39,9 +39,7 @@ class MusicTypeItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(
-          builder: (context) => onTap(context)
-        ));
+        onTap();
       },
       child: view
     );

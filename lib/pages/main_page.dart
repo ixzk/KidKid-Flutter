@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kidkid/pages/setting/setting.dart';
 import 'package:kidkid/util/global_colors.dart';
 import 'package:kidkid/widgets/title_line.dart';
 
@@ -25,7 +26,14 @@ class MainPage extends StatelessWidget {
           backgroundColor: GlobalColors.bgColor,
           leading: TitleLine(title: '${title ?? ""}'),
           automaticallyImplyMiddle: false,
-          trailing: Icon(Icons.settings, color: Colors.grey, size: 24.0),
+          trailing: GestureDetector(
+            child: Icon(Icons.settings, color: Colors.grey, size: 24.0),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => Setting()
+              ));
+            },
+          ),
         ),
         child: body
       ),

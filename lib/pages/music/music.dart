@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kidkid/http/Http.dart';
 import 'package:kidkid/models/cartoon/collection_model.dart';
 import 'package:kidkid/pages/board/draw_board.dart';
@@ -19,6 +20,7 @@ import 'package:kidkid/pages/music/widgets/music_folder_item.dart';
 import 'package:kidkid/pages/music/widgets/music_cell.dart';
 import 'package:provider/provider.dart';
 import 'package:kidkid/providers/draw_board_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Music extends StatelessWidget {
   // 布局常量
@@ -75,14 +77,9 @@ class Music extends StatelessWidget {
                             MusicTypeItem(
                               name: '益智游戏', 
                               image: Image.asset('images/music/game.png'), 
-                              onTap: (context) => MultiProvider(
-                                providers: [
-                                  ChangeNotifierProvider<GameProvider>.value(
-                                    value: GameProvider(),
-                                  )
-                                ],
-                                child:Game()
-                              )),
+                              onTap: () {
+                                _game(context);
+                              }),
                             MusicTypeItem(
                               name: '录制故事', 
                               image: Image.asset('images/music/jiazhang.png'), 
@@ -127,7 +124,7 @@ class Music extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 20.0),
               child: TitleMore(title: '当前最热', pressMore: () {
                 Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => MusicMore(provider)
+                  builder: (context) => MusicMore(provider)
                 ));
               },)
             );
@@ -201,5 +198,34 @@ class Music extends StatelessWidget {
     }
 
     return list;
+  }
+
+  Future<void> _game(context) async {
+    Future<SharedPreferences> _pref = SharedPreferences.getInstance();
+    SharedPreferences pref = await _pref;
+
+    bool canGame = pref.getBool("game") ?? true;
+    
+    if (canGame) {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => MultiProvider(
+          providers: [
+            ChangeNotifierProvider<GameProvider>.value(
+              value: GameProvider(),
+            )
+          ],
+          child:Game()
+        )
+      ));
+    } else {
+      Fluttertoast.showToast(
+        msg: "现在禁止玩游戏！",
+        timeInSecForIos: 2,
+        fontSize: 20.0,
+        backgroundColor: GlobalColors.red,
+        textColor: GlobalColors.white,
+        gravity: ToastGravity.CENTER,
+      );
+    }
   }
 }

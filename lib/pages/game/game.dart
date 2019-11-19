@@ -18,6 +18,7 @@ class Game extends StatelessWidget {
       child: CupertinoPageScaffold(
       backgroundColor: GlobalColors.bgColor,
         navigationBar: CupertinoNavigationBar(
+          transitionBetweenRoutes: false,
           border: null,
           backgroundColor: GlobalColors.white,
           actionsForegroundColor: GlobalColors.red,

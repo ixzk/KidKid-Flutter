@@ -9,9 +9,64 @@ import 'package:kidkid/util/global_colors.dart';
 import 'package:kidkid/pages/main_page.dart';
 import 'package:kidkid/pages/music/music.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+
+  var canUse = true;
+
+  _AppState() {
+    _loadValue();
+  }
+
   Widget build(BuildContext context) {
+
+    if (!canUse) {
+      return MaterialApp(
+        home: Scaffold(
+          body: Container(
+            color: Color(0xFF333444),
+            width: double.infinity,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: 120,
+                  height: 120,
+                  child: Image.asset('images/sun.png'),
+                ),
+                SizedBox(height: 15.0),
+                Text("太晚啦", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18.0)),
+                SizedBox(height: 10.0),
+                Text("小太阳都睡着了呢~", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18.0)),
+                SizedBox(height: 10.0),
+                Text("明天再一起玩耍吧", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18.0)),
+                Container(
+                  width: 80,
+                  height: 80,
+                  child: Image.asset('images/zzz.png'),
+                ),
+              ],
+            ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            child: Text("test"),
+            onPressed: () {
+              setState(() {
+                canUse = true;
+              });
+            },
+          ),
+        ),
+      );
+    }
+
     return MaterialApp(
       home: CupertinoTabScaffold(
         tabBar: CupertinoTabBar(
@@ -137,6 +192,16 @@ class App extends StatelessWidget {
     );
   }
 
+  _loadValue() async {
+    Future<SharedPreferences> _pref = SharedPreferences.getInstance();
+    SharedPreferences pref = await _pref;
+
+    setState(() {
+      canUse = !(pref.getBool("day") ?? false);
+    });
+
+    print(canUse);
+  }
   // AIBot 动画效果
   // Widget aibotTransition() {
   //   return 

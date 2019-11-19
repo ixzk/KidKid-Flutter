@@ -17,6 +17,8 @@ class KKWebView extends StatelessWidget {
     return CupertinoPageScaffold(
       backgroundColor: GlobalColors.bgColor,
       navigationBar: CupertinoNavigationBar(
+        heroTag: "kkweb" + url,
+        transitionBetweenRoutes: false,
         border: null,
         backgroundColor: GlobalColors.white,
         actionsForegroundColor: GlobalColors.red,

@@ -121,6 +121,10 @@ flutter:
   - images/sticker/35.png
 
   - images/logo_v2.0.png
+  - images/jiazhang2.png
+  - images/sun.png
+  - images/zzz.png
+  - images/bot.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

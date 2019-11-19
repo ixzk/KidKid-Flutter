@@ -117,6 +117,7 @@ class Video extends StatelessWidget {
       body: view,
       backgroundColor: GlobalColors.bgColor,
       floatingActionButton: FloatingActionButton(
+        heroTag: "video-floating",
         backgroundColor: GlobalColors.red,
         child: Icon(Icons.refresh),
         mini: true,

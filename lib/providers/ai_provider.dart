@@ -6,14 +6,26 @@ import 'package:kidkid/http/Http.dart';
 import 'dart:convert';
 import 'package:convert/convert.dart';
 import 'package:crypto/crypto.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AIProvider with ChangeNotifier {
   List<Object> chatList = [];
   bool isVoicing = false;
 
+  bool canAI = true;
+
   final APP_SECRET = "57db87590bee4c3dabfd4604aaa28535";
 
   AIProvider() {
+    loadValue();
+  }
+
+  loadValue() async {
+    Future<SharedPreferences> _pref = SharedPreferences.getInstance();
+    SharedPreferences pref = await _pref;
+
+    canAI = pref.getBool("ai") ?? true;
+    notifyListeners();
   }
 
   void setVoicingState(bool state) {

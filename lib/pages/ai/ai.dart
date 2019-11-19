@@ -8,8 +8,6 @@ import 'package:kidkid/widgets/title_line.dart';
 import 'package:provider/provider.dart';
 import 'package:xfvoice/xfvoice.dart';
 
-
-
 class AI extends StatelessWidget {
 
   AIProvider provider;
@@ -45,8 +43,31 @@ class AI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    
     provider = Provider.of<AIProvider>(context);
+    provider.loadValue();
+
+    if (!provider.canAI) {
+      return Material(
+        child: Container(
+          color: GlobalColors.bgColor,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Container(
+                  width: 80,
+                  height: 80,
+                  child: Image.asset('images/bot.png'),
+                ),
+                SizedBox(height: 20.0),
+                Text("小K睡着了💤", style: TextStyle(fontWeight: FontWeight.bold))
+              ],
+            )
+          ),
+        ),
+      );
+    }
 
     return Material(
         child: Container(
