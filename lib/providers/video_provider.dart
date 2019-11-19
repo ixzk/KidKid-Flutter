@@ -15,17 +15,66 @@ class VideoProvider with ChangeNotifier {
 
   final String collectId;
 
+  bool hasNext = false;
+  var page = 1;
+
   VideoProvider({this.collectId}) {
     getData();
   }
 
+  void loadMore() {
+    if (this.collectId == null) {
+      Http.get(
+        API_CARTOON_LIST,
+        params: {
+          "Page": (++page)
+        },
+        success: (result) {
+          var jsonData = json.decode(result);
+          hasNext = (jsonData["has_next"] == "True");
+          for (var videoJson in jsonData["data"]["lists"]) {
+            this.videoList.add(CartoonModel.fromJson(videoJson));
+          }
+          
+          notifyListeners();
+        },
+        failure: (error) {
+          print(error);
+        }
+      );
+    } else {
+      Http.get(
+        API_COLLECTION_DETAIL,
+        params: {
+          "CollectionId": this.collectId,
+          "Page": (++page)
+        },
+        success: (result) {
+          var jsonData = json.decode(result);
+          hasNext = (jsonData["has_next"] == "True");
+          for (var videoJson in jsonData["data"]["lists"]) {
+            this.videoList.add(CartoonModel.fromJson(videoJson));
+          }
+          
+          notifyListeners();
+        },
+        failure: (error) {
+          print(error);
+        }
+      );
+    }
+  }
+
   void getData() {
+    videoList = [];
+    notifyListeners();
     if (this.collectId == null) {
       Http.get(
         API_CARTOON_LIST,
         success: (result) {
-          var jsonData = json.decode(result)["data"]["lists"];
-          for (var videoJson in jsonData) {
+          var jsonData = json.decode(result);
+          hasNext = (jsonData["has_next"] == "True");
+          for (var videoJson in jsonData["data"]["lists"]) {
             this.videoList.add(CartoonModel.fromJson(videoJson));
           }
           
@@ -42,8 +91,9 @@ class VideoProvider with ChangeNotifier {
           "CollectionId": this.collectId
         },
         success: (result) {
-          var jsonData = json.decode(result)["data"]["lists"];
-          for (var videoJson in jsonData) {
+          var jsonData = json.decode(result);
+          hasNext = (jsonData["has_next"] == "True");
+          for (var videoJson in jsonData["data"]["lists"]) {
             this.videoList.add(CartoonModel.fromJson(videoJson));
           }
           

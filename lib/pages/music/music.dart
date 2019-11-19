@@ -32,21 +32,20 @@ class Music extends StatelessWidget {
     double itemWH = (MediaQuery.of(context).size.width - 20 * 2 - 20 * 2) / 3.0;
 
     var provider = Provider.of<MusicProvider>(context);
-
+    
+    var view = null;
     if (provider.songList.length == 0) {
-      return Container(
+      view = Container(
+        width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            CircularProgressIndicator(),
-          ],
+        child: Center(
+          child: CircularProgressIndicator(),
         )
       );
     } else {
-      return ListView.builder(
-        itemCount: listsArea + provider.songList.length,
+      var count = listsArea + provider.songList.length + 1;
+      view = ListView.builder(
+        itemCount: count,
         itemBuilder: (context, index) {
           if (index == navArea) {
             return Container(
@@ -133,22 +132,49 @@ class Music extends StatelessWidget {
               },)
             );
           } else {
-            var model = provider.songList[index - listsArea];
-            return GestureDetector(
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0),
-                child: MusicCell(model.title, desc: model.singer, image: Image.network(model.img, fit: BoxFit.cover)),
-              ),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => Player(model)
-                ));
-              },
-            );
+            if (index != count - 1) {
+              var model = provider.songList[index - listsArea];
+              return GestureDetector(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20.0),
+                  child: MusicCell(model.title, desc: model.singer, image: Image.network(model.img, fit: BoxFit.cover)),
+                ),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                      builder: (context) => Player(model)
+                  ));
+                },
+              );
+            } else {
+              return GestureDetector(
+                child: Container(
+                  height: 40.0,
+                  child: Center(
+                    child: Text((provider.hasNext ? "加载更多" : "没有更多了"), style: TextStyle(color: Colors.grey, fontSize: 12.0)),
+                  ),
+                ),
+                onTap: () {
+                  provider.loadMore();
+                },
+              );
+            }
           }
         },
       );
     }
+
+    return Scaffold(
+      body: view,
+      backgroundColor: GlobalColors.bgColor,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: GlobalColors.red,
+        child: Icon(Icons.refresh),
+        mini: true,
+        onPressed: () {
+          provider.getData();
+        },
+      ),
+    );
   }
 
   List<Widget> _getCollectionList(MusicProvider provider, context) {

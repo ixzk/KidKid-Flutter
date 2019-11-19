@@ -22,9 +22,10 @@ class Video extends StatelessWidget {
 
     var provider = Provider.of<VideoProvider>(context);
 
-    return ListView.builder(
+    var count = (provider.videoList.length / 2).ceil() + listArea + 1;
+    var view = ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: 20.0),
-        itemCount: (provider.videoList.length / 2).ceil() + listArea,
+        itemCount: count,
         itemBuilder: (context, index) {
           if (index == swiperArea) {
             return ClipRRect(
@@ -55,6 +56,21 @@ class Video extends StatelessWidget {
               child: TitleMore(title: '好看的动画片')
             );
           } else {
+
+            if (index == count - 1) {
+              return GestureDetector(
+                child: Container(
+                  height: 40.0,
+                  child: Center(
+                    child: Text((provider.hasNext ? "加载更多" : "没有更多了"), style: TextStyle(color: Colors.grey, fontSize: 12.0)),
+                  ),
+                ),
+                onTap: () {
+                  provider.loadMore();
+                },
+              );
+            }
+
             var leftModel = provider.videoList[(index - listArea) * 2];
             var rightModel = provider.videoList[(index - listArea) * 2 + 1];
             return Container(
@@ -95,6 +111,19 @@ class Video extends StatelessWidget {
             );
           }
         }
+    );
+
+    return Scaffold(
+      body: view,
+      backgroundColor: GlobalColors.bgColor,
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: GlobalColors.red,
+        child: Icon(Icons.refresh),
+        mini: true,
+        onPressed: () {
+          provider.getData();
+        },
+      ),
     );
   }
 }

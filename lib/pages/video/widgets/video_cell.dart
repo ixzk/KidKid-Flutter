@@ -34,7 +34,11 @@ class VideoCell extends StatelessWidget {
               child: Image.network(model.img, fit: BoxFit.cover,),
             )
           ),
-          Text(model.title, style: TextStyle(fontWeight: FontWeight.bold))
+          Container(
+            width: MediaQuery.of(context).size.width * 0.5 * 0.8,
+            child: Text(model.title, style: TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis,
+        softWrap: false,),
+          )
         ],
       ),
     );
