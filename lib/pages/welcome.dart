@@ -13,10 +13,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class WelcomePage extends StatefulWidget {
   static String tag = 'welcome-page';
-  _WelcomePageState createState() => _WelcomePageState();
+  WelcomePageState createState() => WelcomePageState();
 }
 
-class _WelcomePageState extends State<WelcomePage> {
+class WelcomePageState extends State<WelcomePage> {
   
   bool isLogin = false;
   bool loginPage = false;
@@ -27,11 +27,20 @@ class _WelcomePageState extends State<WelcomePage> {
     checkLogin();
   }
 
+  updateLogin() {
+    setState(() {
+      isLogin = true;
+      loginPage = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
 
     if (loginPage) {
-      return LoginPage();
+      print("build====");
+      print(this);
+      return LoginPage(welcome: this);
     } else {
       if (isLogin) {
         return App();
@@ -60,8 +69,8 @@ class _WelcomePageState extends State<WelcomePage> {
     Future<SharedPreferences> _pref = SharedPreferences.getInstance();
     SharedPreferences pref = await _pref;
     bool _isLogin = pref.getBool("login") ?? false;
-    // if (_isLogin != null && _isLogin) {
-    if (true) {
+    if (_isLogin != null && _isLogin) {
+    // if (true) {
       Fluttertoast.showToast(
         msg: "自动登录中",
         gravity: ToastGravity.BOTTOM,

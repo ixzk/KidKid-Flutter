@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kidkid/http/API.dart';
@@ -6,18 +9,28 @@ import 'package:kidkid/pages/welcome.dart';
 import 'package:flutter/material.dart';
 import 'package:kidkid/util/global_colors.dart';
 import 'package:kidkid/widgets/loading_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:kidkid/pages/app.dart';
 
 class LoginPage extends StatefulWidget {
   static String tag = 'login-page';
+
+  WelcomePageState welcome;
+
+  LoginPage({this.welcome});
+
   @override
-  _LoginPageState createState() => new _LoginPageState();
+  _LoginPageState createState() => new _LoginPageState(welcome: welcome);
 }
 
 class _LoginPageState extends State<LoginPage> {
 
   String username;
   String password;
+
+  WelcomePageState welcome;
+
+  _LoginPageState({this.welcome});
 
 
   @override
@@ -89,6 +102,39 @@ class _LoginPageState extends State<LoginPage> {
       msg: "登录中",
       gravity: ToastGravity.BOTTOM,
     );   
+
+    FormData data = FormData.fromMap({
+      "username": username,
+      "password": password,
+    });
+
+    print(API_LOGIN);
+    Http.post(API_LOGIN, data: data, success: (res) async {
+      var jsonData = json.decode(res);
+
+      if (jsonData["code"] == 200 || jsonData["code"] == "200") {
+        Future<SharedPreferences> _pref = SharedPreferences.getInstance();
+        SharedPreferences pref = await _pref;
+        pref.setString("id", jsonData["data"]["id"].toString());
+        pref.setString("name", jsonData["data"]["name"]);
+        pref.setBool("login", true);
+
+        Fluttertoast.showToast(
+          msg: "登录成功",
+          gravity: ToastGravity.BOTTOM,
+        );
+
+        welcome.updateLogin();
+
+      } else {
+        Fluttertoast.showToast(
+          msg: "用户名或密码错误",
+          gravity: ToastGravity.BOTTOM,
+        );
+      }
+    
+    });
+  
   }
 
   void _register() {
@@ -98,12 +144,13 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     print(API_REGISTER);
-    Http.post(API_REGISTER, params: {
+    FormData data = FormData.fromMap({
       "username": username,
       "password": password,
       "tel": "",
       "mail": ""
-    }, success: (res) {
+    });
+    Http.post(API_REGISTER, data: data, success: (res) {
       print(res);
       Fluttertoast.showToast(
         msg: "注册成功",
