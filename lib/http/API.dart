@@ -28,3 +28,5 @@ final API_RECORDING = API_HOST + "/GetRecording/";
 final API_UPLOAD_RECORD = API_HOST + "/AddRecording/";
 // 上传图片
 final API_UPLOAD_PIC = API_HOST + "/AddDraw/";
+// 我的绘画
+final API_MY_DRAW = API_HOST + "/GetDraw/";

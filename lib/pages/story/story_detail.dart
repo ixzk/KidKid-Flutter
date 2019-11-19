@@ -13,34 +13,34 @@ import 'package:kidkid/http/API.dart';
 import 'package:kidkid/http/Http.dart';
 import 'package:kidkid/models/record/record_model.dart';
 import 'package:kidkid/models/sotry/story_model.dart';
+import 'package:kidkid/providers/story_detail_provider.dart';
 import 'package:kidkid/providers/story_provider.dart';
 import 'package:kidkid/util/global_colors.dart';
+import 'package:kidkid/widgets/kk_web_view.dart';
 import 'package:kidkid/widgets/loading_dialog.dart';
 import 'package:provider/provider.dart';
 
 class StoryDetail extends StatefulWidget {
   final StoryModel model;
-  final StoryProvider provider;
-  StoryDetail(this.model, this.provider);
-  _StoryDetailState createState() => new _StoryDetailState(model, provider);
+  StoryDetail(this.model);
+  _StoryDetailState createState() => new _StoryDetailState(model);
 }
 
 class _StoryDetailState extends State<StoryDetail> {
 
   final StoryModel model;
-  final StoryProvider provider;
   final FlutterSound flutterSound = new FlutterSound();
   String path;
   StreamSubscription _playerSubscription;
   bool isVoicing = false;
 
 
-  _StoryDetailState(this.model, this.provider);
+  _StoryDetailState(this.model);
 
   @override
   Widget build(BuildContext context) {
 
-    provider.getRecordList(model.id);
+    var provider = Provider.of<StoryDetailProvider>(context);
 
     return Material(
       child: CupertinoPageScaffold(
@@ -69,8 +69,9 @@ class _StoryDetailState extends State<StoryDetail> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     GestureDetector(
-                      child: Icon(Icons.cloud_upload, color: GlobalColors.red),
+                      child: Icon(Icons.cloud_upload, color: (path == null ? Colors.grey: GlobalColors.red)),
                       onTap: () {
+                        if (path == null) return ;
                         _upload();
                       },
                     ),
@@ -87,8 +88,9 @@ class _StoryDetailState extends State<StoryDetail> {
                       },
                     ),
                     GestureDetector(
-                      child: Icon(Icons.play_circle_filled, color: GlobalColors.red),
+                      child: Icon(Icons.play_circle_filled, color: (path == null ? Colors.grey: GlobalColors.red)),
                       onTap: () {
+                        if (path == null) return ;
                         _play();
                       },
                     )
@@ -106,19 +108,18 @@ class _StoryDetailState extends State<StoryDetail> {
     if (!isVoicing) {
       await flutterSound.startRecorder(null);
     } else {
-      await flutterSound.stopRecorder();
+      String voicePath = await flutterSound.stopRecorder();
+      setState(() {
+        path = voicePath;
+      });
     }
     print("录音");
   }
 
   Future _play() async {
-    String voicePath = await flutterSound.startPlayer(null);
+    await flutterSound.startPlayer(null);
     // return print("file文件：$contents");
     await flutterSound.setVolume(1.0);
-    print('startPlayer: $path');
-    setState(() {
-      path = voicePath;
-    });
   }
 
   _upload() async {
@@ -193,18 +194,25 @@ class _StoryDetailState extends State<StoryDetail> {
 
     for (RecordModel model in dataList) {
       list.add(
-        Container(
-          padding: EdgeInsets.only(bottom: 10.0),
-          decoration: BoxDecoration(
-            border: Border(bottom: BorderSide(width: 0.2, color: Colors.grey))
+        GestureDetector(
+          child: Container(
+            padding: EdgeInsets.only(bottom: 10.0),
+            decoration: BoxDecoration(
+              border: Border(bottom: BorderSide(width: 0.2, color: Colors.grey))
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(model.title),
+                Icon(Icons.play_circle_filled)
+              ],
+            )
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Text(model.title),
-              Icon(Icons.play_circle_filled)
-            ],
-          )
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => KKWebView(url: model.recording, title: "录音"),
+            ));
+          },
         )
       );
     }
