@@ -65,15 +65,19 @@ class Music extends StatelessWidget {
                             MusicTypeItem(
                               name: '涂鸦板', 
                               image: Image.asset('images/music/huaban.png'), 
-                              onTap: (context) => MultiProvider(
-                                providers: [
-                                  ChangeNotifierProvider<DrawBoardProvider>.value(
-                                    value: DrawBoardProvider(),
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => MultiProvider(
+                                    providers: [
+                                      ChangeNotifierProvider<DrawBoardProvider>.value(
+                                        value: DrawBoardProvider(),
+                                      )
+                                    ],
+                                    child:DrawBoard()
                                   )
-                                ],
-                                child:DrawBoard()
-                              )
-                            ),
+                                )
+                              );
+                            }),
                             MusicTypeItem(
                               name: '益智游戏', 
                               image: Image.asset('images/music/game.png'), 
@@ -83,15 +87,27 @@ class Music extends StatelessWidget {
                             MusicTypeItem(
                               name: '录制故事', 
                               image: Image.asset('images/music/jiazhang.png'), 
-                              onTap: (context) => MultiProvider(
-                                providers: [
-                                  ChangeNotifierProvider<StoryProvider>.value(
-                                    value: StoryProvider(),
+                              // onTap: (context) => MultiProvider(
+                              //   providers: [
+                              //     ChangeNotifierProvider<StoryProvider>.value(
+                              //       value: StoryProvider(),
+                              //     )
+                              //   ],
+                              //   child:Story()
+                              // )
+                              onTap: () {
+                                Navigator.push(context, MaterialPageRoute(
+                                  builder: (context) => MultiProvider(
+                                    providers: [
+                                      ChangeNotifierProvider<StoryProvider>.value(
+                                        value: StoryProvider(),
+                                      )
+                                    ],
+                                    child:Story()
                                   )
-                                ],
-                                child:Story()
-                              )
-                            ),
+                                )
+                              );
+                              }),
                           ],
                         )
                       ],
