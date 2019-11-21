@@ -58,7 +58,7 @@ class Story extends StatelessWidget {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          Icon(Icons.title),
+                          Icon(Icons.star_border),
                           Text(model.title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0))
                         ],
                       ),

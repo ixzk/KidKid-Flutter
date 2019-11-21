@@ -24,7 +24,7 @@ dependencies:
   json_annotation:
   provider:
   path_provider:
-  dio:
+  dio: "3.0.4"
   audioplayers:
   permission_handler:
   image_gallery_saver:
@@ -37,7 +37,7 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^0.1.2
+  cupertino_icons:
   webview_flutter:
   flutter_swiper:
   chewie:

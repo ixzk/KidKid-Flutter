@@ -18,7 +18,10 @@ import 'package:kidkid/providers/story_provider.dart';
 import 'package:kidkid/util/global_colors.dart';
 import 'package:kidkid/widgets/kk_web_view.dart';
 import 'package:kidkid/widgets/loading_dialog.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:http_parser/src/media_type.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class StoryDetail extends StatefulWidget {
   final StoryModel model;
@@ -70,7 +73,7 @@ class _StoryDetailState extends State<StoryDetail> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     GestureDetector(
-                      child: Icon(Icons.cloud_upload, color: (path == null ? Colors.grey: GlobalColors.red)),
+                      child: Icon(Icons.cloud_upload, color: (path == null && !isVoicing ? Colors.grey: GlobalColors.red)),
                       onTap: () {
                         if (path == null) return ;
                         _upload();
@@ -89,7 +92,7 @@ class _StoryDetailState extends State<StoryDetail> {
                       },
                     ),
                     GestureDetector(
-                      child: Icon(Icons.play_circle_filled, color: (path == null ? Colors.grey: GlobalColors.red)),
+                      child: Icon(Icons.play_circle_filled, color: (path == null && !isVoicing ? Colors.grey: GlobalColors.red)),
                       onTap: () {
                         if (path == null) return ;
                         _play();
@@ -107,20 +110,22 @@ class _StoryDetailState extends State<StoryDetail> {
 
   Future _onVoice() async {
     if (!isVoicing) {
-      await flutterSound.startRecorder(null);
-    } else {
-      String voicePath = await flutterSound.stopRecorder();
+      String voicePath = await flutterSound.startRecorder(null);
       setState(() {
         path = voicePath;
       });
+      print("录音");
+    } else {
+      await flutterSound.stopRecorder();
+      print("录音结束");
     }
-    print("录音");
   }
 
   Future _play() async {
     await flutterSound.startPlayer(null);
     // return print("file文件：$contents");
     await flutterSound.setVolume(1.0);
+    print("bofang");
   }
 
   _upload() async {
@@ -133,31 +138,43 @@ class _StoryDetailState extends State<StoryDetail> {
         }
       );
 
+      File file = File(path);
+      var data = file.readAsBytesSync();
+
+      Future<SharedPreferences> _pref = SharedPreferences.getInstance();
+      SharedPreferences pref = await _pref;
+      var id = pref.getString("id");
+      var title = (pref.getString("name") ?? "") + "的录音";
+
       FormData formdata = FormData.fromMap({
-        "file": MultipartFile.fromFile(path, filename: "sound.m4a"),
+        // "file": MultipartFile.fromFile(path,  contentType: MediaType('audio', 'x-m4a'), filename: 'test.m4a'),
+        "file": MultipartFile.fromBytes(data, contentType: MediaType('audio', 'x-m4a'), filename: 'test.m4a')
       });
-      Response res = await Dio().post(
+      Http.post(
         //此处更换为自己的上传文件接口
-        'http://39.97.174.216/upload.php',
+        'http://39.97.174.216/upload.php?type=m4a',
         data: formdata,
+        success: (res) {
+          print(res);
+          var jsonData = json.decode(res.toString());
+          var fileUrl = jsonData["data"] ["path"];
+
+          var formData = FormData.fromMap({
+            "id": id,
+            "url": fileUrl,
+            "StoryId": model.id,
+            "title": title
+          });
+
+          Http.post(API_UPLOAD_RECORD, data: formData, success: (res) {
+            Navigator.pop(context);
+            Fluttertoast.showToast(
+              msg: "上传成功",
+              gravity: ToastGravity.BOTTOM,
+            );
+          });
+        }
       );
-
-      var jsonData = json.decode(res.toString());
-      var fileUrl = jsonData["data"]["path"];
-
-      Http.post(API_UPLOAD_RECORD, params: {
-        "userid": "1",
-        "url": fileUrl,
-        "StoryId": model.id,
-        "title": model.title
-      }, success: (res) {
-        Navigator.pop(context);
-        Fluttertoast.showToast(
-          msg: "上传成功",
-          gravity: ToastGravity.BOTTOM,
-        );
-      });
-
     } else {
       Fluttertoast.showToast(
         msg: "还未录音",

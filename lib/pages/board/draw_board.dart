@@ -223,44 +223,45 @@ class DrawBoard extends StatelessWidget {
       }
     );
 
+    Future<SharedPreferences> _pref = SharedPreferences.getInstance();
+    SharedPreferences pref = await _pref;
+    var id = pref.getString("id");
+
     FormData formdata = FormData.fromMap({
       "file": MultipartFile.fromBytes(pngBytes, contentType: MediaType('image', 'png'), filename: 'test.png'),
     });
-    Response res = await Dio().post(
+    Http.post(
       //此处更换为自己的上传文件接口
       'http://39.97.174.216/upload.php',
       data: formdata,
+      success: (res) {
+        print(res);
+        var jsonData = json.decode(res.toString());
+        if (jsonData['code'] == 200) {
+          var imgUrl = jsonData["data"]["path"];
+          print(API_UPLOAD_PIC);
+
+          var data = {
+            "id": id,
+            "url": "http://39.97.174.216/" + imgUrl
+          };
+          
+          print(data);
+          Http.post(API_UPLOAD_PIC, data: FormData.fromMap(data), success: (res) {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(
+              msg: "上传成功",
+              gravity: ToastGravity.BOTTOM,
+            );
+          });
+        } else {
+          Navigator.of(context).pop();
+          Fluttertoast.showToast(
+            msg: "保存失败，网络错误",
+            gravity: ToastGravity.BOTTOM,
+          );
+        }
+      }
     );
-    print(res);
-    var jsonData = json.decode(res.toString());
-    if (jsonData['code'] == 200) {
-      var imgUrl = jsonData["data"]["path"];
-      print(API_UPLOAD_PIC);
-
-      Future<SharedPreferences> _pref = SharedPreferences.getInstance();
-      SharedPreferences pref = await _pref;
-      var id = pref.getString("id");
-      var data = {
-        "id": id,
-        "url": "http://39.97.174.216/" + imgUrl
-      };
-      
-      print(data);
-      Http.post(API_UPLOAD_PIC, data: FormData.fromMap(data), success: (res) {
-        Navigator.of(context).pop();
-        Fluttertoast.showToast(
-          msg: "上传成功",
-          gravity: ToastGravity.BOTTOM,
-        );
-      });
-    } else {
-      Navigator.of(context).pop();
-      Fluttertoast.showToast(
-        msg: "保存失败，网络错误",
-        gravity: ToastGravity.BOTTOM,
-      );
-    }
-
-    print(res);
   }
 }
