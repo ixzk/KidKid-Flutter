@@ -39,7 +39,7 @@ class Game extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text("暂无数据", style: TextStyle(fontSize: 12.0, color: Colors.grey))
+            Text("加载中", style: TextStyle(fontSize: 12.0, color: Colors.grey))
           ],
         ),
       );

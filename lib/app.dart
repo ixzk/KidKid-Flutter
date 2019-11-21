@@ -11,6 +11,10 @@ import 'package:kidkid/pages/music/music.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class SharedTabController extends CupertinoTabController {
+  static SharedTabController shared = SharedTabController();
+}
+
 class App extends StatefulWidget {
   @override
   _AppState createState() => _AppState();
@@ -19,8 +23,12 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
 
   var canUse = true;
+  var currentIndex = 0;
+
+  CupertinoTabController controller;
 
   _AppState() {
+    controller = SharedTabController.shared;
     _loadValue();
   }
 
@@ -69,8 +77,10 @@ class _AppState extends State<App> {
 
     return MaterialApp(
       home: CupertinoTabScaffold(
+        controller: controller,
         tabBar: CupertinoTabBar(
           border: null,
+          currentIndex: currentIndex,
           backgroundColor: GlobalColors.white,
           items: [
             _getBottomNavigationBarItem(
@@ -116,7 +126,7 @@ class _AppState extends State<App> {
                             builder: (context) => AIProvider(),
                           )
                         ],
-                        child: AI(),
+                        child: AI(controller),
                       )
                     ); 
             
@@ -201,6 +211,12 @@ class _AppState extends State<App> {
     });
 
     print(canUse);
+  }
+
+  changeIndex(index) {
+    setState(() {
+      currentIndex = index;
+    });
   }
   // AIBot 动画效果
   // Widget aibotTransition() {
