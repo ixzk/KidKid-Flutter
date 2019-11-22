@@ -33,6 +33,7 @@ class Video extends StatelessWidget {
               child: Container(
                 height: 150.0,
                 child: Swiper(
+                  autoplay: true,
                   itemCount: 3,
                   pagination: SwiperPagination(
                     builder: DotSwiperPaginationBuilder(
