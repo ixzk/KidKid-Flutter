@@ -142,6 +142,7 @@ class _LoginPageState extends State<LoginPage> {
         SharedPreferences pref = await _pref;
         pref.setString("id", jsonData["data"]["id"].toString());
         pref.setString("name", jsonData["data"]["name"]);
+        pref.setString("pwd", password);
         pref.setBool("login", true);
 
         Fluttertoast.showToast(
