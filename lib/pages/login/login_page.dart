@@ -32,66 +32,91 @@ class _LoginPageState extends State<LoginPage> {
 
   _LoginPageState({this.welcome});
 
+  bool isInputPassword = false;
+
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: GlobalColors.bgColor,
         body: Center(
-          child: Container(
-            width: 250.0,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text("登录", style: TextStyle(fontSize: 35.0, fontWeight: FontWeight.bold)),
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: "用户名",
-                  ),
-                  onChanged: (text) {
-                    setState(() {
-                      username = text;
-                    });
-                  },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Image.asset("images/login" + (isInputPassword ? "2" : "1") + ".png", width: 250.0, fit: BoxFit.fill),
+              Container(
+                width: 250.0,
+                height: 230.0,
+                decoration: BoxDecoration(
+                  color:GlobalColors.white,
+                  // borderRadius: BorderRadius.circular(10.0)
                 ),
-                TextField(
-                  decoration: InputDecoration(
-                    labelText: "密码",
-                  ),
-                  onChanged: (text) {
-                    setState(() {
-                      password = text;
-                    });
-                  },
-                  obscureText: true,
-                ),
-                SizedBox(height: 20.0),
-                Container(
-                  height: 50.0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: <Widget>[
-                      RaisedButton(
-                        color: GlobalColors.red,
-                        child: Text("登录", style: TextStyle(color: GlobalColors.white)),
-                        onPressed: () {
-                          _login();
-                        },
+                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    // Text("登录", style: TextStyle(fontSize: 35.0, fontWeight: FontWeight.bold)),
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: "用户名",
                       ),
-                      RaisedButton(
-                        color: Colors.grey,
-                        child: Text("注册", style: TextStyle(color: GlobalColors.white)),
-                        onPressed: () {
-                          _register();
-                        },
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
+                      onTap: () {
+                        setState(() {
+                          isInputPassword = false;
+                        });
+                      },
+                      onChanged: (text) {
+                        setState(() {
+                          username = text;
+                        });
+                      },
+                    ),
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: "密码",
+                      ),
+                      onTap: () {
+                        setState(() {
+                          isInputPassword = true;
+                        });
+                      },
+                      onChanged: (text) {
+                        setState(() {
+                          password = text;
+                        });
+                      },
+                      obscureText: true,
+                    ),
+                    SizedBox(height: 20.0),
+                    Container(
+                      height: 50.0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          RaisedButton(
+                            color: GlobalColors.red,
+                            child: Text("登录", style: TextStyle(color: GlobalColors.white)),
+                            onPressed: () {
+                              _login();
+                            },
+                          ),
+                          RaisedButton(
+                            color: Colors.grey,
+                            child: Text("注册", style: TextStyle(color: GlobalColors.white)),
+                            onPressed: () {
+                              _register();
+                            },
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          )
         )
       ),
     );
