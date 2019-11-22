@@ -69,8 +69,8 @@ class WelcomePageState extends State<WelcomePage> {
     Future<SharedPreferences> _pref = SharedPreferences.getInstance();
     SharedPreferences pref = await _pref;
     bool _isLogin = pref.getBool("login") ?? false;
-    // if (_isLogin != null && _isLogin) {
-    if (false) {
+    if (_isLogin != null && _isLogin) {
+    // if (false) {
       Fluttertoast.showToast(
         msg: "自动登录中",
         gravity: ToastGravity.BOTTOM,
